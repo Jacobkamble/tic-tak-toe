@@ -1,12 +1,10 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Board from "./Board";
 
 const Game = ({ row, colums }) => {
   const [board, setBoard] = useState(Array(row * colums).fill(null));
 
   const [xIsNext, setXIsNext] = useState(true);
-
-
 
   const calculateWinner = (squares) => {
     // Check rows
@@ -45,6 +43,34 @@ const Game = ({ row, colums }) => {
 
     return null;
   };
+
+  const winner = calculateWinner(board);
+
+  const isDraw= board.filter((i) => {
+    return i;
+  }).length === board.length && !winner
+
+ 
+
+  const  reset=()=>{
+    if(winner||isDraw){
+        setBoard(Array(row * colums).fill(null)) 
+    }
+   
+  }
+
+  useEffect(()=>{
+
+    const timer=setTimeout(() => {
+        reset()
+    }, 2000);
+
+    return ()=>clearTimeout(timer)
+
+
+  },[winner,isDraw])
+
+  
   const handleClick = useCallback(
     (i) => {
       if (calculateWinner(board) || board[i]) {
@@ -58,7 +84,9 @@ const Game = ({ row, colums }) => {
     [board]
   );
 
-  const winner = calculateWinner(board);
+ 
+
+ 
 
   return (
     <>
@@ -66,9 +94,7 @@ const Game = ({ row, colums }) => {
 
       {winner ? "Winnner is " + winner : ""}
 
-      {board.filter((i) => {
-        return i;
-      }).length === board.length && !winner
+      {isDraw
         ? "Draw"
         : ""}
       {}
