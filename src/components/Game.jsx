@@ -1,41 +1,52 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Board from "./Board";
 
 const Game = ({ row, colums }) => {
   const [board, setBoard] = useState(Array(row * colums).fill(null));
 
-  const [resetBoard, setReset] = useState(false);
-
-  
-
   const [xIsNext, setXIsNext] = useState(true);
 
-  const calculateWinner = (squares) => {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
 
-      if (
-        squares[a] &&
-        squares[a] === squares[b] &&
-        squares[a] === squares[c]
-      ) {
-        return squares[a];
+
+  const calculateWinner = (squares) => {
+    // Check rows
+    for (let i = 0; i < row; i++) {
+      const start = i * colums;
+      const line = squares.slice(start, start + colums);
+      if (line.every((cell) => cell && cell === line[0])) {
+        return line[0];
       }
     }
+
+    // Check columns
+    for (let i = 0; i < colums; i++) {
+      const line = [];
+      for (let j = 0; j < row; j++) {
+        line.push(squares[i + j * colums]);
+      }
+      if (line.every((cell) => cell && cell === line[0])) {
+        return line[0];
+      }
+    }
+
+    // Check diagonals
+    const mainDiagonal = [];
+    const antiDiagonal = [];
+    for (let i = 0; i < row; i++) {
+      mainDiagonal.push(squares[i * (colums + 1)]);
+      antiDiagonal.push(squares[(i + 1) * (colums - 1)]);
+    }
+    if (mainDiagonal.every((cell) => cell && cell === mainDiagonal[0])) {
+      return mainDiagonal[0];
+    }
+    if (antiDiagonal.every((cell) => cell && cell === antiDiagonal[0])) {
+      return antiDiagonal[0];
+    }
+
     return null;
   };
-
-  const handleClick = useCallback( (i) => {
+  const handleClick = useCallback(
+    (i) => {
       if (calculateWinner(board) || board[i]) {
         return;
       }

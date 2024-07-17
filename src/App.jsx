@@ -6,7 +6,7 @@ function App() {
   return (
     <>
 
-     <Game row={3} colums={3}/>
+     <Game row={5} colums={5}/>
     </>
   );
 }
